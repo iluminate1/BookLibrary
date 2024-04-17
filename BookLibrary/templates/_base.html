@@ -1,0 +1,38 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title|default:"Library" }}</title>
+    <link rel="shortcut icon" href="{% static 'img/logo.svg' %}" type="image/x-icon">
+    {% block header_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    {% endblock header_css %}
+    {% endblock head %}
+</head>
+
+<body>
+    {% block header %}
+    <header class="header">
+        {% include 'components/header.html' %}        
+    </header>        
+    {% endblock header %}
+
+    {% block main %}
+    <main>
+        <div class="container">
+            {% block container %}
+            {% endblock container %}
+        </div>
+    </main>        
+    {% endblock main %}
+
+    {% block footer %}
+    {% endblock footer %}
+    
+    {% block script %}{% endblock script %}
+</body>
+</html>

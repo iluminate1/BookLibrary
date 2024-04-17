@@ -1,0 +1,27 @@
+{% load static %}
+
+<div class="container header__inner">
+    <a href="{% url 'home' %}" class="header__logo"><img src="{% static 'img/logo.svg' %}" alt="Your logo"></a>
+    <nav class="nav">
+        <a href="#">Library</a>
+        <a href="#">Orders</a>
+        <button><b>+</b> Order a new book</button>
+    </nav>
+    <div class="profile">
+        {% if user.is_authenticated %}
+        {% if user_pic %}
+        <img src="{{ user_pic }}" alt="Profile picture" class="profile__img">
+        {% else %}
+        <img src="{% static 'img/user/default.jpg' %}" alt="Profile picture" class="profile__img">
+        {% endif %}
+        <span class="profile__name">{{ user.username }}</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+            <path d="M0 7.33l2.829-2.83 9.175 9.339 9.167-9.339 2.829 2.83-11.996 12.17z" />
+        </svg>
+        {% else %}
+        <a href="#">Login</a>
+        <span style="margin: 0px 10px;">|</span>
+        <a href="#">Register</a>
+        {% endif %}
+    </div>
+</div>
