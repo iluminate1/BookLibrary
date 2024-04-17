@@ -9,11 +9,7 @@
     </nav>
     <div class="profile">
         {% if user.is_authenticated %}
-        {% if user_pic %}
-        <img src="{{ user_pic }}" alt="Profile picture" class="profile__img">
-        {% else %}
-        <img src="{% static 'img/user/default.jpg' %}" alt="Profile picture" class="profile__img">
-        {% endif %}
+        <img src="{{ user.get_photo_url }}" alt="Profile picture" class="profile__img">
         <span class="profile__name">{{ user.username }}</span>
         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
             <path d="M0 7.33l2.829-2.83 9.175 9.339 9.167-9.339 2.829 2.83-11.996 12.17z" />

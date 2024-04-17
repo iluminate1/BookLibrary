@@ -12,6 +12,9 @@ __pycache__/
 # media
 BookLibrary/media
 
+# migrations
+migrations/
+
 # Distribution / packaging
 .Python
 build/
