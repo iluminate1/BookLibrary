@@ -1,12 +1,14 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.forms import BaseModelForm
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect
+from django.template.base import kwarg_re
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView
 
-from .forms import LoginUserForm, RegisterUserForm
+from .forms import LoginUserForm, RegisterUserForm, UserPasswordChangeForm
 
 
 # Create your views here.
@@ -22,7 +24,7 @@ class LoginUserView(LoginView):
     extra_context = {"title": "Sing In"}
 
     def get_success_url(self):
-        return reverse_lazy("home")
+        return self.get_redirect_url() or reverse_lazy("User:profile")
 
 
 class RegisterUserView(CreateView):
@@ -43,3 +45,17 @@ class RegisterUserView(CreateView):
         login(self.request, auth_user)
 
         return HttpResponseRedirect(self.success_url)
+
+
+class LogoutUserView(LoginRequiredMixin, LogoutView):
+    def handle_no_permission(self) -> HttpResponseRedirect:
+        return HttpResponseRedirect(
+            reverse_lazy("User:login") + f"?next={reverse_lazy('User:profile')}"
+        )  # ???
+
+
+class UserPasswordChangeView(PasswordChangeView):
+    form_class = UserPasswordChangeForm
+    template_name = "Users/change_password.html"
+    extra_context = {"title": "Change Password"}
+    success_url = reverse_lazy("User:password_change_done")
