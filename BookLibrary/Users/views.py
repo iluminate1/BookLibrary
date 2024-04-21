@@ -23,6 +23,11 @@ class LoginUserView(LoginView):
     template_name = "Users/login.html"
     extra_context = {"title": "Sing In"}
 
+    def get(self, request: HttpRequest, *args: str, **kwargs) -> HttpResponse:
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse_lazy("User:profile"))
+        return super().get(request, *args, **kwargs)
+
     def get_success_url(self):
         return self.get_redirect_url() or reverse_lazy("User:profile")
 
@@ -33,8 +38,12 @@ class RegisterUserView(CreateView):
     extra_context = {"title": "Sing Up"}
     success_url: str = reverse_lazy("User:profile")
 
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+    def get(self, request: HttpRequest, *args: str, **kwargs) -> HttpResponse:
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse_lazy("User:profile"))
+        return super().get(request, *args, **kwargs)
 
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
         user = form.save(commit=False)
         user.set_password(form.cleaned_data.get("password1"))
         user.save()
