@@ -1,6 +1,6 @@
 * {
     box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
 }
 
@@ -22,7 +22,6 @@ a {
 header {
     background-color: white;
     margin-bottom: 40px;
-    ;
 }
 
 .header__inner {
@@ -54,7 +53,7 @@ header {
 }
 
 
-button:active {
+.nav button:active {
     transform: translateY(3px);
 }
 
@@ -68,7 +67,12 @@ button:active {
 }
 
 .profile {
+    position: relative;
+}
+
+.profile__inner {
     display: flex;
+    cursor: pointer;
     align-items: center;
 }
 
@@ -80,32 +84,47 @@ button:active {
 }
 
 .profile__name {
-    margin-right: 5px;
+    font-weight: 600;
 }
 
-.profile svg {
-    transform: translateY(1px);
+.profile__dropdown {
+    position: absolute;
+    width: 100%;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 10px 0px;
+    border-radius: 10px;
+    margin-top: 0.3rem;
+    background: #e3fef3;
+    overflow: hidden;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(0.5rem);
+    transition: all 0.1s cubic-bezier(0.16, 1, 0.5, 1);
 }
 
-.profile__img,
-.profile__name,
-.profile svg {
-    cursor: pointer;
+.profile__dropdown a {
+    display: flex;
+    align-items: center;
+    column-gap: 0.5rem;
+    padding: 0.8rem 1rem;
+    text-decoration: none;
+    color: black;
+    text-align: center;
 }
 
-.dropdown:hover {
-    color: blueviolet;
-    fill: blueviolet;
-    transition: all 2s ease-in;
+.profile__dropdown a:hover {
+    background-color: #0000014a;
+    color: white;
 }
 
-.dropdown_wrapper>.dropdown {
-    cursor: pointer;
-    margin-right: 1vw;
+.show {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0rem);
 }
 
-*/ main {
-    margin-top: 40px;
+.arrow {
+    transform: rotate(180deg);
+    transition: 0.3s ease;
 }
 
 .search {
@@ -121,7 +140,6 @@ button:active {
     font-size: 16px;
     border: 1px solid rgb(129, 129, 129);
 }
-
 
 .search__svg {
     position: absolute;
@@ -161,7 +179,6 @@ button:active {
     bottom: -2px;
     left: 0;
 }
-
 
 .tabs__line,
 .news__line {

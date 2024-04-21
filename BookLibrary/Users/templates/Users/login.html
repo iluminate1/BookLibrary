@@ -1,0 +1,45 @@
+{% extends '_base.html' %}
+
+{% load static %}
+
+{% block header_css %}
+    <link rel="stylesheet" href="{% static 'Users/css/auth.css' %}">
+    {{ block.super }}
+{% endblock header_css %}
+
+{% block container %}
+<div class="form-container">
+    <form class="form" id="sign-in-form" method="post">
+        {% csrf_token %}
+        <h1>Sing in</h1>
+        <div class="input__inner">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                style="fill: rgba(0, 0, 0, 1)">
+                <path
+                    d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 2v.511l-8 6.223-8-6.222V6h16zM4 18V9.044l7.386 5.745a.994.994 0 0 0 1.228 0L20 9.044 20.002 18H4z">
+                </path>
+            </svg>
+            {{ form.username }}
+        </div>
+        <div class="input__inner">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                style="fill: rgba(0, 0, 0, 1)">
+                <path
+                    d="M12 2C9.243 2 7 4.243 7 7v3H6c-1.103 0-2 .897-2 2v8c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-8c0-1.103-.897-2-2-2h-1V7c0-2.757-2.243-5-5-5zm6 10 .002 8H6v-8h12zm-9-2V7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9z">
+                </path>
+            </svg>
+            {{ form.password }}
+        </div>
+        <a href="#">Forgot your password?</a>
+        <button class="form__button button__theme" type="submit">Sign In</button>
+    </form>
+    <div class="cover">
+        <img class="cover__img" src="{% static 'Users/img/cover.jpg' %}" alt="">
+        <div class="cover_content">
+            <h1>Hello, Friend!</h1>
+            <p>Enter your personal details and start journey with us</p>
+            <a class="button__theme" href="{% url 'User:registr' %}">Sing Up</a>
+        </div>
+    </div>
+</div>
+{% endblock container %}
