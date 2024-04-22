@@ -133,3 +133,5 @@ AUTH_USER_MODEL = 'Users.User'
 LOGIN_REDIRECT_URL = 'User:login'
 LOGOUT_REDIRECT_URL = 'home'
 LOGIN_URL = 'User:login'
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

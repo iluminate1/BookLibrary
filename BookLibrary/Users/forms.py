@@ -5,6 +5,8 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.forms import (
     AuthenticationForm,
     PasswordChangeForm,
+    PasswordResetForm,
+    SetPasswordForm,
     UserCreationForm,
 )
 from django.forms.utils import ErrorList
@@ -37,7 +39,7 @@ class LoginUserForm(AuthenticationForm):
     def __init__(self, *args, **kwargs) -> None:
         kwargs_new = {"error_class": DivErrorList}
         kwargs_new.update(kwargs)
-        super(LoginUserForm, self).__init__(*args, **kwargs_new)
+        super(self.__class__, self).__init__(*args, **kwargs_new)
 
     username = forms.CharField(
         label="login",
@@ -70,7 +72,7 @@ class RegisterUserForm(UserCreationForm):
     def __init__(self, *args, **kwargs) -> None:
         kwargs_new = {"error_class": DivErrorList}
         kwargs_new.update(kwargs)
-        super(RegisterUserForm, self).__init__(*args, **kwargs_new)
+        super(self.__class__, self).__init__(*args, **kwargs_new)
 
     username = forms.CharField(
         label="login",
@@ -122,7 +124,7 @@ class UserPasswordChangeForm(PasswordChangeForm):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         kwargs_new = {"error_class": DivErrorList}
         kwargs_new.update(kwargs)
-        super(UserPasswordChangeForm, self).__init__(*args, **kwargs_new)
+        super(self.__class__, self).__init__(*args, **kwargs_new)
 
     old_password = forms.CharField(
         label="Old password",
@@ -134,6 +136,46 @@ class UserPasswordChangeForm(PasswordChangeForm):
             }
         ),
     )
+    new_password1 = forms.CharField(
+        label="New password",
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form__input",
+                "type": "password",
+                "placeholder": "New password",
+            }
+        ),
+    )
+    new_password2 = forms.CharField(
+        label="Repeat new password",
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form__input",
+                "type": "password",
+                "placeholder": "Repeat new password",
+            }
+        ),
+    )
+
+
+class UserPasswordResetForm(PasswordResetForm):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        kwargs_new = {"error_class": DivErrorList}
+        kwargs_new.update(kwargs)
+        super(self.__class__, self).__init__(*args, **kwargs_new)
+
+    email = forms.CharField(
+        label="Email",
+        widget=forms.EmailInput(attrs={"class": "form__input", "placeholder": "Email"}),
+    )
+
+
+class UserPasswordResetConfirmForm(SetPasswordForm):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        kwargs_new = {"error_class": DivErrorList}
+        kwargs_new.update(kwargs)
+        super(self.__class__, self).__init__(*args, **kwargs_new)
+
     new_password1 = forms.CharField(
         label="New password",
         widget=forms.PasswordInput(

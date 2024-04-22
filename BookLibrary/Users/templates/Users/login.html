@@ -34,7 +34,7 @@
             {{ form.password }}
         </div>
         {{ form.password.errors.as_divs }}
-        <a href="#">Forgot your password?</a>
+        <a href="{% url 'User:password-reset' %}">Forgot your password?</a>
         <button class="form__button button__theme" type="submit">Sign In</button>
     </form>
     <div class="cover">
