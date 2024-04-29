@@ -1,5 +1,75 @@
 {% extends '_base.html' %}
 
+{% load static %}
+
+{% block header_css %}
+<link rel="stylesheet" href="{% static 'Users/css/profile.css' %}">
+{{ block.super }}
+{% endblock header_css %}
+
 {% block container %}
-    <img src='{{ user.get_photo_url }}' alt="">
+<img class="profile__card__cover" src="{{ page_user.get_bg_cover_url }}" alt="">
+<div class="profile_card__inner">
+    <div class="card__left">
+        <img src="{{ page_user.get_photo_url }}" alt="" class="card__img">
+        <span class="card__username">{{ page_user.username}}</span>
+        <span class="card__id">ID: {{ page_user.id }}</span>
+        <span>{{ page_user.get_full_name }} {{ page_user.get_age|default:"" }}</span>
+
+        {% if user.is_authenticated and page_user.pk == user.pk %}
+        <a href="{% url 'User:password-change' %}" style="margin-top: 25px; text-decoration:underline;">Change
+            password</a>
+        {% endif %}
+    </div>
+    <div class="card__right">
+        <div class="row">
+            <div class="text-field">
+                <label class="text-field__label" for="firstname">First Name:</label>
+                <input class="text-field__input" type="text" name="firstname" id="firstname" placeholder="First Name"
+                    value="{{ page_user.first_name }}" disabled readonly>
+            </div>
+            <div class="text-field">
+                <label class="text-field__label" for="lastname">Last Name:</label>
+                <input class="text-field__input" type="text" name="lastname" id="lastname" placeholder="Last Name"
+                    value="{{ page_user.last_name }}" disabled readonly>
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-field">
+                <label class="text-field__label" for="phone">Phone number:</label>
+                <input class="text-field__input" type="tel" name="phone" id="phone" placeholder="Phone number"
+                    value="{{ page_user.phone }}" disabled readonly>
+            </div>
+            <div class="text-field">
+                <label class="text-field__label" for="email">Email address:</label>
+                <input class="text-field__input" type="email" name="email" id="email" placeholder="Email address"
+                    value="{{ page_user.email }}" disabled readonly>
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-field">
+                <label class="text-field__label" for="birthday">Birthday:</label>
+                <input class="text-field__input" type="date" name="birthday" id="birthday" placeholder="Birthday"
+                    value="{{ page_user.birthday|date:'Y-m-d' }}" disabled readonly>
+            </div>
+            <div class="text-field">
+                <label class="text-field__label" for="gender">Gender:</label>
+                <input class="text-field__input" type="text" name="gender" id="gender" placeholder="Gender"
+                    value="{{ page_user.get_sex_display }}" disabled readonly>
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-field">
+                <label class="text-field__label" for="city">City:</label>
+                <input class="text-field__input" type="tex" name="city" id="city" placeholder="City"
+                    value="{{ page_user.get_city_display  }}" disabled readonly>
+            </div>
+            <div class="text-field">
+                <label class="text-field__label" for="postcode">Postcode:</label>
+                <input class="text-field__input" type="number" name="postcode" id="postcode" placeholder="Postcode"
+                    value="{{ page_user.postcode }}" disabled readonly>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock container %}

@@ -1,7 +1,6 @@
-from typing import Any, Optional
+from typing import Any
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.forms import (
     AuthenticationForm,
     PasswordChangeForm,
@@ -11,6 +10,8 @@ from django.contrib.auth.forms import (
 )
 from django.forms.utils import ErrorList
 from django.utils.safestring import mark_safe
+
+from .models import User
 
 
 class DivErrorList(ErrorList):
@@ -186,6 +187,7 @@ class UserPasswordResetConfirmForm(SetPasswordForm):
             }
         ),
     )
+
     new_password2 = forms.CharField(
         label="Repeat new password",
         widget=forms.PasswordInput(
@@ -195,4 +197,138 @@ class UserPasswordResetConfirmForm(SetPasswordForm):
                 "placeholder": "Repeat new password",
             }
         ),
+    )
+
+
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = get_user_model()
+        fields = [
+            "first_name",
+            "last_name",
+            "phone",
+            "email",
+            "birthday",
+            "sex",
+            "city",
+            "postcode",
+            "background_cover",
+            "photo",
+        ]
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        kwargs_new = {"error_class": DivErrorList}
+        kwargs_new.update(kwargs)
+        super(self.__class__, self).__init__(*args, **kwargs_new)
+
+    first_name = forms.CharField(
+        label="First Name:",
+        widget=forms.TextInput(
+            attrs={
+                "class": "text-field__input",
+                "placeholder": "First Name",
+            }
+        ),
+    )
+
+    last_name = forms.CharField(
+        label="Last Name:",
+        widget=forms.TextInput(
+            attrs={
+                "class": "text-field__input",
+                "placeholder": "Last Name",
+            }
+        ),
+    )
+
+    phone = forms.CharField(
+        label="Phone Number:",
+        widget=forms.TextInput(
+            attrs={
+                "class": "text-field__input",
+                "placeholder": "+375 (__)-___-__-__",
+                "type": "tel",
+            }
+        ),
+        required=False,
+    )
+
+    email = forms.CharField(
+        label="Email",
+        widget=forms.EmailInput(
+            attrs={
+                "class": "text-field__input",
+                "placeholder": "Email",
+            }
+        ),
+        disabled=True,
+    )
+
+    birthday = forms.DateField(
+        label="Birthday:",
+        widget=forms.DateInput(
+            attrs={
+                "class": "text-field__input",
+                "placeholder": "Birthday",
+                "type": "date",
+            },
+        ),
+        required=False,
+    )
+
+    sex = forms.ChoiceField(
+        label="Gender:",
+        choices=User.Sex.choices,
+        widget=forms.Select(
+            attrs={
+                "class": "text-field__input",
+                "placeholder": "Gender",
+            }
+        ),
+    )
+
+    city = forms.ChoiceField(
+        label="City:",
+        choices=User.Cities.choices,
+        widget=forms.Select(
+            attrs={
+                "class": "text-field__input",
+                "placeholder": "City",
+            }
+        ),
+    )
+
+    postcode = forms.IntegerField(
+        label="Postcode:",
+        min_value=10_000,
+        max_value=99_999,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "text-field__input",
+                "placeholder": "Postcode",
+            }
+        ),
+        required=False,
+    )
+
+    background_cover = forms.FileField(
+        label="Backgound cover",
+        widget=forms.FileInput(
+            attrs={
+                "hidden": True,
+                "accept": "image/*",
+            }
+        ),
+        required=False,
+    )
+
+    photo = forms.ImageField(
+        label="User avatar",
+        widget=forms.FileInput(
+            attrs={
+                "hidden": True,
+                "accept": "image/*",
+            }
+        ),
+        required=False,
     )

@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "Users.apps.UsersConfig",
-    "phonenumber_field",
 ]
 
 MIDDLEWARE = [
@@ -141,4 +140,3 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-PHONENUMBER_DEFAULT_REGION = "BY"

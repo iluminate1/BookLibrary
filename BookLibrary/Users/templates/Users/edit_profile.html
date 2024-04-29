@@ -1,0 +1,113 @@
+{% extends '_base.html' %}
+
+{% load static %}
+
+{% block header_css %}
+<link rel="stylesheet" href="{% static 'Users/css/profile.css' %}">
+{{ block.super }}
+{% endblock header_css %}
+
+{% block container %}
+<img class="profile__card__cover" src="{{ user.get_bg_cover_url }}" alt="">
+<div class="profile_card__inner">
+    <form method="POST" enctype="multipart/form-data" style="display: contents;">
+        <div class="card__left">
+            <label class="input__file">
+                <img id="avatar" src="{{ user.get_photo_url }}" alt="Avatar img" class="card__img"
+                    style="margin-bottom: 0;">
+                {{ form.photo }}
+                <span>Choose avatar</span>
+            </label>
+            
+            <span>Change bg. cover</span>
+            <label class="input__file">
+                <div class="bg__container">
+                    <img id="bg_cover_img" src="{{ user.get_bg_cover_url }}" alt="Backgound cover">
+                    {{ form.background_cover }}
+                </div>
+            </label>
+            <button class="button_save" type="submit" style="margin-bottom: 10px;">Save</button>
+        </div>
+        <div class="card__right">
+            {% csrf_token %}
+            {{ form.non_field_errors.as_divs }}
+            <div class="row">
+                <div class="text-field">
+                    <label class="text-field__label" for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+                    {{ form.first_name }}
+                    {{ form.first_name.errors.as_divs }}
+                </div>
+                <div class="text-field">
+                    <label class="text-field__label" for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
+                    {{ form.last_name }}
+                    {{ form.last_name.errors.as_divs }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="text-field">
+                    <label class="text-field__label" for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>
+                    {{ form.phone }}
+                    {{ form.phone.errors.as_divs }}
+                </div>
+                <div class="text-field">
+                    <label class="text-field__label" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                    {{ form.email }}
+                    {{ form.email.errors.as_divs }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="text-field">
+                    <label class="text-field__label" for="{{ form.birthday.id_for_label }}">{{ form.birthday.label }}</label>
+                    {{ form.birthday }}
+                    {{ form.birthday.errors.as_divs }}
+                </div>
+
+                <div class="text-field">
+                    <label class="text-field__label" for="{{ form.sex.id_for_label }}">{{ form.sex.label }}</label>
+                    {{ form.sex }}
+                    {{ form.sex.errors.as_divs }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="text-field">
+                    <label class="text-field__label" for="{{ form.city.id_for_label }}">{{ form.city.label }}</label>
+                    {{ form.city }}
+                    {{ form.city.errors.as_divs }}
+                </div>
+                <div class="text-field">
+                    <label class="text-field__label" for="{{ form.postcode.id_for_label }}">{{ form.postcode.label }}</label>
+                    {{ form.postcode }}
+                    {{ form.postcode.errors.as_divs }}
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+{% endblock container %}
+
+{% block script %}
+<script src="{% static 'Users/js/phone_mask.js' %}"></script>
+<script>
+    // Select the input element
+    const inputFile = document.querySelectorAll('input[type=file]');
+    const avatar = document.querySelector("#avatar");
+    const bg_cover = document.querySelector("#bg_cover_img");
+    // Add an event listener for the 'change' event
+    inputFile.forEach((item) => item.addEventListener('change', function () {
+        // Get the selected file
+        const file = this.files[0];
+        const img = URL.createObjectURL(file)
+
+        if (item.id == "{{ form.background_cover.auto_id }}") {
+            bg_cover.src = img;
+        }
+        else if (item.id == "{{ form.photo.auto_id }}") {
+            avatar.src = img;
+
+            // Select the next element and set its HTML content to the file name
+            this.nextElementSibling.innerHTML = file.name;
+        }
+    }));
+</script>
+{% endblock script %}

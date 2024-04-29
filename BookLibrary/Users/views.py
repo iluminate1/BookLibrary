@@ -1,11 +1,17 @@
-from typing import Optional
-from django.contrib.auth import authenticate, login
+from typing import Any, Optional
+from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from django.db.models.base import Model as Model
 from django.forms import BaseModelForm
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import (
+    CreateView,
+    DetailView,
+    TemplateView,
+    UpdateView,
+)
 
 from django.contrib.auth.views import (
     LoginView,
@@ -18,8 +24,11 @@ from django.contrib.auth.views import (
     PasswordResetView,
 )
 
+from .models import User
+
 from .forms import (
     LoginUserForm,
+    ProfileEditForm,
     RegisterUserForm,
     UserPasswordChangeForm,
     UserPasswordResetConfirmForm,
@@ -32,6 +41,52 @@ class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = "Users/profile.html"
     http_method_names = ["get"]
     login_url = "User:login"
+    extra_context = {"title": "Profile"}
+
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context.update({"page_user": self.request.user})
+        return context
+
+
+class UserProfileView(DetailView):
+    model = get_user_model()
+    template_name = "Users/profile.html"
+    context_object_name = "page_user"
+    extra_context = {"title": "Profile"}
+
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        user_id = kwargs.get("pk", None)
+        if user_id == request.user.pk:
+            return HttpResponseRedirect(reverse_lazy("User:profile"))
+        return super().get(request)
+
+
+class ProfileEditView(LoginRequiredMixin, UpdateView):
+    model = get_user_model()
+    form_class = ProfileEditForm
+    template_name = "Users/edit_profile.html"
+    extra_context = {"title": "Profile edit"}
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def get_success_url(self) -> str:
+        return reverse_lazy("User:profile")
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        photo = form.cleaned_data.get("photo")
+        bg_cover = form.cleaned_data.get("background_cover")
+        user_pk = self.request.user.pk
+        cur_user = User.objects.get(pk=user_pk)
+
+        if photo != cur_user.photo:
+            cur_user.photo.delete()
+
+        if bg_cover != cur_user.background_cover:
+            cur_user.background_cover.delete()
+
+        return super().form_valid(form)
 
 
 class LoginUserView(LoginView):
@@ -44,7 +99,7 @@ class LoginUserView(LoginView):
             return HttpResponseRedirect(reverse_lazy("User:profile"))
         return super().get(request, *args, **kwargs)
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return self.get_redirect_url() or reverse_lazy("User:profile")
 
 

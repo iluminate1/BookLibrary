@@ -17,6 +17,7 @@ a {
 .container {
     max-width: 1500px;
     margin: 0 auto;
+    position: relative;
 }
 
 header {
@@ -78,6 +79,8 @@ header {
 
 .profile__img {
     width: 50px;
+    height: 50px;
+    object-fit: cover;
     border-radius: 50%;
     margin-right: 10px;
     border: 3px solid transparent;
@@ -89,11 +92,12 @@ header {
 
 .profile__dropdown {
     position: absolute;
-    width: 100%;
-    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 10px 0px;
+    width: inherit;
+    border: 1px solid black;
+    box-shadow: rgb(0 0 0 / 40%) 11px 12px 10px 0px;
     border-radius: 10px;
     margin-top: 0.3rem;
-    background: #e3fef3;
+    background-color: #fff;
     overflow: hidden;
     visibility: hidden;
     opacity: 0;
@@ -120,6 +124,7 @@ header {
     visibility: visible;
     opacity: 1;
     transform: translateY(0rem);
+    z-index: 10;
 }
 
 .arrow {

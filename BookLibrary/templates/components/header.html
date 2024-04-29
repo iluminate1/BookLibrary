@@ -26,7 +26,7 @@
                     </path>
                 </svg>Profile
             </a>
-            <a href="#">
+            <a href="{% url 'User:profile-edit' %}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                     style="fill: rgba(0, 0, 0, 1)">
                     <path
@@ -48,8 +48,8 @@
                     <path d="M11.06 16h2v-3h3.01v-2h-3.01V8h-2v3h-3v2h3v3z"></path>
                 </svg>Admin
             </a>
-            <hr>
             {% endif %}
+            <hr>
             <form action="{% url 'User:logout'%}" method="post">
                 {% csrf_token %}
                 <a href="#" onclick="this.parentNode.submit()">
