@@ -25,14 +25,6 @@ from . import settings
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("user/", include("Users.urls", namespace="User")),
-    path(
-        "",
-        TemplateView.as_view(
-            template_name="_base.html",
-            extra_context={"title": "Index", "user_pic": None},
-        ),
-        name="home",
-    ),  # stub
 ]
 
 if settings.DEBUG:
