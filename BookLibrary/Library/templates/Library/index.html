@@ -1,0 +1,123 @@
+{% extends '_base.html' %}
+{% load static %}
+{% load tag %}
+{% block header_css %}
+<link rel="stylesheet" href="{% static 'css/swiper-bundle.min.css' %}">
+{{ block.super }}
+{% endblock header_css %}
+
+{% block container %}
+{% include 'components/search.html' %}
+<section class="info">
+    <div class="tabs">
+        <div class="tabs__headline">
+            <span class="tabs__title">Recommended</span>
+            <hr class="tabs__line">
+        </div>
+        <div class="cards">
+            {% for book in top_books %}
+            <div class="cards__item">
+                <a class="card__link" href="{{ book.get_absolute_url }}" title="{{ book.name }}">
+                    <img class="cards__img" src="/media/{{ book.book_cover}}" alt="{{ book.name }}">
+                </a>
+                <div class="cards__desq">
+                    <a class="cards__name" href="{{ book.get_absolute_url }}" title="{{ book.name }}">
+                        <span>{{ book.name }}</span>
+                    </a>
+                    <a class="cards__author" href="{{ book.author.get_absolute_url }}">
+                        <span>{{ book.author }}</span>
+                    </a>
+                    <div class="cards__rating">
+                        {% card_rating book.total_review book.total_rating %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="news">
+        <div class="news__headline">
+            <span class="news__title">News</span>
+            <hr class="news__line">
+        </div>
+        <div class="news__content">
+            <a href="" class="news__link">
+                <img class="news__img" src="{% static 'img/news.jpg' %}" alt="">
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="section__container">
+    <div class="section__title__container">
+        <p class="section__title">New Published Book</p>
+        <hr>
+    </div>
+    <div class="swiper">
+        <div class="swiper-wrapper">
+            {% for book in new_books %}
+            <div class="swiper-slide">
+                <div class="cards__item">
+                    <a class="card__link" href="{{ book.get_absolute_url }}" title="{{ book.name }}">
+                        <img class="cards__img" src="/media/{{ book.book_cover }}" alt="{{ book.name }}">
+                    </a>
+                    <div class="cards__desq">
+                        <a class="cards__name" href="{{ book.get_absolute_url }}" title="{{ book.name }}">
+                            <span>{{ book.name }}</span>
+                        </a>
+                        <a class="cards__author" href="{{ book.author.get_absolute_url}}">
+                            <span>{{ book.author.full_name }}</span>
+                        </a>
+                        <div class="cards__rating">
+                            {% card_rating book.total_review book.total_rating %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+</section>
+
+<section class="category section__container">
+    <div class="section__title__container">
+        <p class="section__title">Category</p>
+        <hr>
+    </div>
+    <div class="swiper">
+        <div class="swiper-wrapper">
+            {% for cat in cats %}
+            <div class="swiper-slide">
+                <div class="cards__item">
+                    <a class="card__link" href="{{ cat.get_absolute_url }}" title="{{ cat.name }}">
+                        <img class="cards__img" src="/media/{{ cat.cover }}" alt="{{ cat.name }}">
+                        <div class="cards__desq cards__desq-category">
+                            <span>{{ cat.name }}</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock container %}
+
+{% block script %}
+<script src="{% static 'js/swiper-bundle.min.js' %}"></script>
+<script type="text/javascript">
+    const swiper = new Swiper('.swiper', {
+        //loop: true,
+        slidesPerView: 5,
+        spaceBetween: 30,
+        mousewheel: {
+            forceToAxis: true,
+        },
+        /*pagination: {
+            el: ".swiper-pagination",
+            type: 'fraction',
+        },*/
+    });
+</script>
+{% endblock script %}

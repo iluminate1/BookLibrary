@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "Users.apps.UsersConfig",
+    "Library.apps.LibraryConfig",
     "debug_toolbar",
 ]
 
@@ -135,7 +136,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "Users.User"
 LOGIN_REDIRECT_URL = "User:login"
-LOGOUT_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "Lib:home"
 LOGIN_URL = "User:login"
 
 AUTHENTICATION_BACKENDS = [

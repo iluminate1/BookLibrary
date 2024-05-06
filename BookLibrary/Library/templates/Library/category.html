@@ -1,0 +1,52 @@
+{% extends '_base.html' %}
+{% load tag %}
+{% block container %}
+<div class="cards__books__inner">
+    <div class="cards__books-left">
+        <h1 style="text-align: center; margin-bottom: 10px">{{ category.name|default:'Library' }}</h1>
+        <div class="card__inner card__box box" style="margin-bottom: 0; align-items: center;">
+            {% for book in books %}
+            <div class="cards__item" style="margin: 20px;">
+                <a class="card__link" href="{{ book.get_absolute_url }}" title="{{ book.name }}">
+                    <img class="cards__img" src="/media/{{ book.book_cover }}" alt="{{ book.name }}">
+                </a>
+                <div class="cards__desq">
+                    <a class="cards__name" href="{{ book.get_absolute_url }}" title="{{ book.name }}">
+                        <span>{{ book.name }}</span>
+                    </a>
+                    <a class="cards__author" href="{{ book.author.get_absolute_url}}">
+                        <span>{{ book.author.full_name }}</span>
+                    </a>
+                    <div class="cards__rating">
+                        {% card_rating book.total_review book.total_rating %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <h1 style="display:flex; align-items: center;">This category is empty 😔</h1>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="cards__books-right">
+        <div class="page__container">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number}}" class="page__prev">&lt;</a>
+            {% else %}
+            <span class="page__prev arrow-empty">&lt;</span>
+            {% endif %}
+            {% for page in paginator.page_range %}
+            {% if page == page_obj.number %}
+            <span class="page__item page-active" style="cursor: default;">{{ page }}</span>
+            {% else %}
+            <a href="?page={{ page }}" class="page__item">{{ page }}</a>
+            {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="page__next">&gt;</a>
+            {% else %}
+            <span class="page__next arrow-empty">&gt;</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock container %}

@@ -1,11 +1,11 @@
 {% load static %}
 
 <div class="container header__inner">
-    <a href="{% url 'home' %}" class="header__logo"><img src="{% static 'img/logo.svg' %}" alt="Your logo"></a>
+    <a href="{% url 'Lib:home' %}" class="header__logo"><img src="{% static 'img/logo.svg' %}" alt="Your logo"></a>
     <nav class="nav">
-        <a href="#">Library</a>
-        <a href="#">Orders</a>
-        <button><b>+</b> Order a new book</button>
+        <a href="{% url 'Lib:library' %}">Library</a>
+        <a href="#">My Shelf</a>
+        <a href="#">Contribute</a>
     </nav>
     <div class="profile">
         {% if user.is_authenticated %}

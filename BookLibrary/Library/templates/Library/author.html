@@ -1,0 +1,66 @@
+{% extends '_base.html' %}
+{% load static %}
+{% load tag %}
+
+{% block header_css %}
+<link rel="stylesheet" href="{% static 'css/swiper-bundle.min.css' %}">
+{{ block.super }}
+{% endblock header_css %}
+
+{% block container %}
+<div class="card__inner">
+    <div class="card__left card__box">
+        <img class="card__img" src="/media/{{ author.photo }}" alt="{{ author.full_name }}">
+        <span class="card__username">{{ author.full_name }}</span>
+        <span style="color: grey; margin-bottom: 25px;">{{ author.country }}</span>
+        <a class="card__wiki" href="{{ author.wiki_page }}" target="_blank">Wiki</a>
+    </div>
+    <div class="card__right card__box">
+        <div class="right__inner">
+            <h2 style="text-align: center;">{{ author.full_name }}</h2>
+            <hr style="border: 1px solid black; margin-bottom: 15px">
+            <span class="card__bio">{{ author.bio }}</span>
+        </div>
+    </div>
+</div>
+<div class="card__box" style="margin-bottom: 35px;">
+    <div class="swiper">
+        <div class="swiper-wrapper">
+            {% for book in related_books %}
+            <div class="swiper-slide">
+                <div class="cards__item">
+                    <a class="card__link" href="{{ book.get_absolute_url }}" title="{{ book.name }}">
+                        <img class="cards__img" src="/media/{{ book.book_cover }}" alt="{{ book.name }}">
+                    </a>
+                    <div class="cards__desq">
+                        <a class="cards__name" href="{{ book.get_absolute_url }}" title="{{ book.name }}">
+                            <span>{{ book.name }}</span>
+                        </a>
+                        <a class="cards__author" href="{{ book.author.get_absolute_url}}">
+                            <span>{{ book.author.full_name }}</span>
+                        </a>
+                        <div class="cards__rating">
+                            {% card_rating book.total_review book.total_rating %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+</div>
+{% endblock container %}
+
+{% block script %}
+<script src="{% static 'js/swiper-bundle.min.js' %}"></script>
+<script type="text/javascript">
+    const swiper = new Swiper('.swiper', {
+        slidesPerView: 5,
+        spaceBetween: 30,
+        mousewheel: {
+            forceToAxis: true,
+        },
+    });
+</script>
+{% endblock script %}
