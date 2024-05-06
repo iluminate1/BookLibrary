@@ -39,22 +39,28 @@ class User(AbstractUser):
 
     photo = models.ImageField(
         upload_to="users/photo/%Y/%m/%d/",
-        default="users/default.jpg",
+        default="Users/photo/default.jpg",
         verbose_name="User avatar",
     )
-    birthday = models.DateField(blank=True, verbose_name="User birthday date")
+    birthday = models.DateField(
+        null=True, blank=True, verbose_name="User birthday date"
+    )
     postcode = models.PositiveIntegerField(
+        null=True,
         blank=True,
         validators=[PostCodeLengthValidator()],
         verbose_name="Postcode",
     )
     phone = models.CharField(
         blank=True,
+        null=True,
+        default=None,
         max_length=19,
+        unique=True,
         validators=[
             RegexValidator(
                 r"^(\+375) \((29|25|44|33)\) (\d{3})\-(\d{2})\-(\d{2})$",
-                message=" pInvalidhone number",
+                message=" Invalid phone number",
             )
         ],
         verbose_name="Phone number",
@@ -62,8 +68,8 @@ class User(AbstractUser):
     sex = models.CharField(max_length=1, choices=Sex.choices, default=Sex.UNSELECTED)
     background_cover = models.ImageField(
         upload_to="users/bg_cover/%Y/%m/%d/",
-        default="users/default_bg_cover.jpg",
-        verbose_name="User backgound cover",
+        default="Users/bg_cover/default.jpg",
+        verbose_name="Profile backgound cover",
     )
     city = models.CharField(
         max_length=2,

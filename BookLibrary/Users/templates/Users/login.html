@@ -2,11 +2,6 @@
 
 {% load static %}
 
-{% block header_css %}
-    <link rel="stylesheet" href="{% static 'Users/css/auth.css' %}">
-    {{ block.super }}
-{% endblock header_css %}
-
 {% block container %}
 <div class="form-container">
     <form class="form" id="sign-in-form" method="post">
