@@ -1,6 +1,7 @@
 {% extends '_base.html' %}
 {% load tag %}
 {% block container %}
+{% block books__container %}
 <div class="cards__books__inner">
     <div class="cards__books-left">
         <h1 style="text-align: center; margin-bottom: 10px">{{ category.name|default:'Library' }}</h1>
@@ -17,9 +18,8 @@
                     <a class="cards__author" href="{{ book.author.get_absolute_url}}">
                         <span>{{ book.author.full_name }}</span>
                     </a>
-                    <div class="cards__rating">
-                        {% card_rating book.total_review book.total_rating %}
-                    </div>
+                    <!-- <div class="cards__rating">
+                    </div> -->
                 </div>
             </div>
             {% empty %}
@@ -49,4 +49,5 @@
         </div>
     </div>
 </div>
+{% endblock books__container %}
 {% endblock container %}

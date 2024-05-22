@@ -17,7 +17,9 @@
         {% endif %}
     </div>
     <div class="card__right card__box">
+        {% if page_user.is_visible %}
         <div class="card__right-inner">
+
             <div class="text-field">
                 <label class="text-field__label" for="firstname">First Name:</label>
                 <input class="text-field__input" type="text" name="firstname" id="firstname" placeholder="First Name"
@@ -59,6 +61,9 @@
                     value="{{ page_user.postcode }}" disabled readonly>
             </div>
         </div>
+        {% else %}
+        <span style="text-align: center; font-size: xxx-large">Profile hidden</span>
+        {% endif %}
     </div>
 </div>
 {% endblock container %}

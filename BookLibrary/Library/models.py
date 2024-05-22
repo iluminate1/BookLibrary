@@ -1,8 +1,14 @@
 from datetime import datetime
+from typing import Any, Optional
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import F
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import F, Count, Sum
+from django.core.validators import (
+    MaxLengthValidator,
+    MaxValueValidator,
+    MinLengthValidator,
+    MinValueValidator,
+)
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -95,13 +101,14 @@ class Book(models.Model):
         default="Lib/book/cover/default.svg",
         verbose_name="Book cover",
     )
-    # book_page_cover ?
     publish_date = models.PositiveIntegerField(
         validators=[
             MinValueValidator(1500),
             MaxValueValidator(datetime.today().year),
         ]
     )
+    publisher = models.CharField(max_length=200, verbose_name="Publisher")
+    publisher_slug = models.SlugField(max_length=200, db_index=True)
     language = models.CharField(
         max_length=3,
         choices=Language.choices,
@@ -109,6 +116,8 @@ class Book(models.Model):
         verbose_name="Book language",
     )
     pages = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
         validators=[MinValueValidator(0), MaxValueValidator(10_000)],
         verbose_name="Amount of pages",
     )
@@ -116,6 +125,9 @@ class Book(models.Model):
         choices=tuple(map(lambda x: (bool(x[0]), x[1]), Status.choices)),
         default=Status.DRAFT,  # type: ignore
         verbose_name="Book status",
+    )
+    preview = models.URLField(
+        blank=True, null=True, verbose_name="URL for book preview"
     )
     description = models.TextField(blank=True, verbose_name="Book description")
     total_review = models.PositiveIntegerField(default=1)
@@ -135,17 +147,73 @@ class Book(models.Model):
         return reverse("Lib:book", kwargs={"slug": self.slug})
 
 
-class Review(models.Model):
+class UserRatingQuerySet(models.QuerySet):
+    def total_rating(self, id: int):
+        return (
+            self.select_related("book", "user")
+            .filter(book=id, rating__isnull=False)
+            .aggregate(total_rating=Sum("rating"))
+        )
+
+    def total_review(self, id: int):
+        return (
+            self.select_related("book", "user")
+            .filter(book=id, rating__isnull=False)
+            .aggregate(total_review=Count("rating"))
+        )
+
+    def book_total(self, book_id: int):
+        return (
+            self.select_related("book", "user")
+            .filter(book=book_id, rating__isnull=False)
+            .aggregate(totla_rating=Sum("rating"), total_review=Count("rating"))
+        )
+
+
+class UserRatingManager(models.Manager):
+    def get_queryset(self) -> UserRatingQuerySet:
+        return UserRatingQuerySet(self.model)
+
+    def total_rating(self, id) -> Optional[int]:
+        return self.get_queryset().total_rating(id).get("total_rating", None)
+
+    def total_review(self, id) -> Optional[int]:
+        return self.get_queryset().total_review(id).get("total_review", None)
+
+    def book_total(self, book_id: int) -> dict[str, int | None]:
+        return self.get_queryset().book_total(book_id=book_id)
+
+
+class UserRating(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    review_star = models.PositiveIntegerField(
+    rating = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        default=None,
         validators=[
-            MinValueValidator(0),
+            MinValueValidator(1),
             MaxValueValidator(5),
-        ]
+        ],
     )
-    review_text = models.TextField()
-    time_create = models.DateTimeField(auto_now_add=True, verbose_name="Create time")
 
-    def get_absolute_url(self) -> str:
-        return reverse("Lib:home")
+    objects = models.Manager()
+    book_rating = UserRatingManager()
+
+    def __str__(self) -> str:
+        return (
+            f"Id={self.pk} BookId={self.book} UserId={self.user} Rating={self.rating}"
+        )
+
+
+class Review(models.Model):
+    class Meta:
+        ordering = ["-time_create"]
+
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    review_text = models.TextField(
+        validators=[MinLengthValidator(10), MaxLengthValidator(400)],
+        verbose_name="Review text",
+    )
+    time_create = models.DateTimeField(auto_now_add=True, verbose_name="Create time")

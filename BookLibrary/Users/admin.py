@@ -74,7 +74,7 @@ class CustomUserAdmin(UserAdmin):
         "last_name",
         "is_staff",
         "user_photo",
-        "view_profile"
+        "view_profile",
     )
 
     list_display_links = ("id", "username")
@@ -109,6 +109,7 @@ class CustomUserAdmin(UserAdmin):
                     "city",
                     "background_cover",
                     "bg_cover",
+                    "is_visible",
                 )
             },
         ),

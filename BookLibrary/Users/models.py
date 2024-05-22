@@ -28,6 +28,12 @@ class User(AbstractUser):
         MALE = "M", _("Male")
         FEMALE = "F", _("Female")
 
+    class Visibility(models.IntegerChoices):
+        HIDDEN = 0, _("Hidden")
+        VISIBLE = 1, _("Visible")
+
+        # __empty__ = _("(Unknown)")
+
     class Cities(models.TextChoices):
         UNSELECTED = "UN", ("Unselected")
         MINSK = "MI", _("Minsk")
@@ -39,7 +45,7 @@ class User(AbstractUser):
 
     photo = models.ImageField(
         upload_to="users/photo/%Y/%m/%d/",
-        default="Users/photo/default.jpg",
+        default="Users/photo/default.png",
         verbose_name="User avatar",
     )
     birthday = models.DateField(
@@ -76,6 +82,13 @@ class User(AbstractUser):
         choices=Cities.choices,
         default=Cities.UNSELECTED,
         verbose_name="City",
+    )
+
+    is_visible = models.BooleanField(
+        max_length=1,
+        choices=tuple(map(lambda x: (bool(x[0]), x[1]), Visibility.choices)),
+        default=Visibility.HIDDEN,  # type: ignore
+        verbose_name="Profile visibility",
     )
 
     def __str__(self) -> str:

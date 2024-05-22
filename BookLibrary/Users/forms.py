@@ -214,6 +214,7 @@ class ProfileEditForm(forms.ModelForm):
             "postcode",
             "background_cover",
             "photo",
+            "is_visible",
         ]
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -331,4 +332,16 @@ class ProfileEditForm(forms.ModelForm):
             }
         ),
         required=False,
+    )
+
+    is_visible = forms.ChoiceField(
+        label="Visibility:",
+        choices=tuple(map(lambda x: (bool(x[0]), x[1]), User.Visibility.choices)),
+        widget=forms.Select(
+            attrs={
+                "class": "text-field__input",
+                "placeholder": "Visibility",
+                "style": "text-align: center; width: 80%; margin-bottom: 15px;",
+            }
+        ),
     )

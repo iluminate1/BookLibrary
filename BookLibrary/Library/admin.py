@@ -55,9 +55,11 @@ class BookAdmin(admin.ModelAdmin):
         "author",
         "category",
         "publish_date",
+        "publisher",
+        "publisher_slug",
         "language",
         "pages",
         "is_published",
     )
-    prepopulated_fields = {"slug": ("name",)}
+    prepopulated_fields = {"slug": ("name",), "publisher_slug": ("publisher",)}
     save_on_top = True

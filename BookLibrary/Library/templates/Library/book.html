@@ -1,0 +1,125 @@
+{% extends '_base.html' %}
+{% load tag %}
+{% block container %}
+<div class="container__inner">
+    <div class="body">
+        <div class="book__details">
+            <div class="book__cover">
+                <div class="panel">
+                    <div class="book__img">
+                        <img src="/media/{{ book.book_cover }}" alt="">
+                    </div>
+                    <div class="preview__wrapper">
+                        {% if book.preview %}
+                        <a href="#" class="show_preview">Preview</a>
+                        <dialog id="previewDialog">
+                            <iframe src="{{ book.preview }}" frameborder="0" width="800" height="800"></iframe>
+                            <button class="closeDialog button_save">Close</button>
+                        </dialog>
+                        {% else %}
+                        <a class="preview_unavalible" href="#">Preview (unavalible)</a>
+                        {% endif %}
+                    </div>
+                    <button class="button_save">Borrow</button>
+                </div>
+            </div>
+            <div class="book__info">
+                <div class="work_title-author">
+                    <span>
+                        <h1 class="work_title">{{ book.name }}</h1>
+                        <h2 class="by_line">
+                            by
+                            <a href="{{ book.author.get_absolute_url }}">{{ book.author }}</a>
+                        </h2>
+                        <div class="book_rating">
+                            <div class="cards__rating">
+                                {% book_rating book.pk %}
+                            </div>
+                        </div>
+                    </span>
+                </div>
+                <div class="book_desq">
+                    <p>{{ book.description }}</p>
+                </div>
+                <div class="mini-info">
+                    <div class="info-cards">
+                        <div class="info-card-item">
+                            <div>Publish Date</div>
+                            <span>{{ book.publish_date }}</span>
+                        </div>
+                        <div class="info-card-item">
+                            <div>Publisher</div>
+                            <span>
+                                <a href="/search/?author={{ book.publisher_slug }}"
+                                    style="color: #02598b; text-decoration: underline">{{ book.publisher }}</a>
+                            </span>
+                        </div>
+                        <div class="info-card-item">
+                            <div>Language</div>
+                            <span>{{ book.get_language_display }}</span>
+                        </div>
+                        {% if book.pages %}
+                        <div class="info-card-item">
+                            <div>Pages</div>
+                            <span>{{ book.pages }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="comments__inner">
+    <div class="comments">
+        <span>Comments</span>
+        <hr>
+        <div class="comments-cards">
+            {% for comment in comments %}
+            <div class="comment-item">
+                <div class="item-info">
+                    <img class="profile__img" src="{{ comment.user.get_photo_url }}" alt="{{ comment.user }}">
+                    <div class="info-text">
+                        <span><a href="{{ comment.user.get_absolute_url }}">{{ comment.user }}</a></span>
+                        <span>{{ comment.time_create }}</span>
+                    </div>
+                </div>
+                <hr style="margin: 0 10px">
+                <div class="comment-text">
+                    {{ comment.review_text }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="add-panel">
+        <form action="add-comment/" method="post" style="display:contents">
+            {% csrf_token %}
+            <span>Commnet text</span>
+            {% if error %}
+            <span
+                style="font-family: monospace; font-style: italic; color: #c44a4a; text-align: center; margin-bottom: 5px;">{{error}}</span>
+            {% endif %}
+            <input type="hidden" name="book_id" value="{{ book.pk }}">
+            <textarea name="text" id="text"></textarea>
+            <button class="button_save" type="submit">Add commnet</button>
+        </form>
+    </div>
+</div>
+{% endblock container %}
+
+{% block script %}
+<script>
+    const dialogElem = document.getElementById("previewDialog");
+    const showBtn = document.querySelector(".show_preview");
+    const closeBtn = document.querySelector(".closeDialog");
+
+    showBtn.addEventListener("click", () => {
+        dialogElem.showModal();
+    });
+
+    closeBtn.addEventListener("click", () => {
+        dialogElem.close();
+    });
+</script>
+{% endblock script %}

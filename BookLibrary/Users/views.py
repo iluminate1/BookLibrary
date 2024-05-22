@@ -80,8 +80,9 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
         user_pk = self.request.user.pk
         cur_user = User.objects.get(pk=user_pk)
 
-        if photo != cur_user.photo:
-            cur_user.photo.delete()
+        # if photo != cur_user.photo:
+        #     if not cur_user.photo.name.split()[-1] == "default.png":
+        #         cur_user.photo.delete()
 
         if bg_cover != cur_user.background_cover:
             cur_user.background_cover.delete()

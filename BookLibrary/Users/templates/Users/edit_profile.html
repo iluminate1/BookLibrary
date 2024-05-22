@@ -6,6 +6,7 @@
 <img class="profile__card__cover" src="{{ user.get_bg_cover_url }}" alt="">
 <div class="profile_card__inner">
     <form method="POST" enctype="multipart/form-data" style="display: contents;">
+        {% csrf_token %}
         <div class="card__left card__box">
             <label class="input__file">
                 <img id="avatar" src="{{ user.get_photo_url }}" alt="Avatar img" class="card__img"
@@ -23,10 +24,12 @@
                 </div>
                 {{ form.background_cover.errors.as_divs }}
             </label>
+            <label style="text-align: center;">{{ form.is_visible.label }}</label>
+            {{ form.is_visible }}
+            {{ form.is_visible.errors.as_divs }}
             <button class="button_save" type="submit" style="margin-bottom: 10px;">Save</button>
         </div>
         <div class="card__right card__box">
-            {% csrf_token %}
             {{ form.non_field_errors.as_divs }}
             <div class="card__right-inner">
                 <div class="text-field">
