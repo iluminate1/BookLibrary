@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, RedirectView, TemplateView
 
-from .models import Author, Book, Category, Review
+from .models import Author, Book, Category, Review, UserRating
 
 
 class IndexView(TemplateView):
@@ -133,11 +133,22 @@ class BookView(TemplateView):
         error = self.request.GET.get("error", None)
         context = super().get_context_data(**kwargs)
         book = get_object_or_404(Book.book, slug=self.kwargs["slug"])
-        comments = Review.objects.filter(book=book)
+        comments = Review.objects.select_related("user").filter(book=book)
+
+        try:
+            user_rate = UserRating.objects.values("rating").get(
+                user=self.request.user, book=book
+            )
+        except UserRating.DoesNotExist as e:
+            user_rate = None
+
+        arr = range(5, 0, -1)
         nkwargs = {
             "book": book,
             "comments": comments,
             "error": error,
+            "user_rate": user_rate,
+            "stars": arr,
         }
         context.update(nkwargs)
         return context
@@ -184,5 +195,46 @@ class AddCommentView(LoginRequiredMixin, RedirectView):
         except Exception as e:
             print(e)
             self.error_message = "Can't add your comment to database"
+
+        return super().post(request, *args, **kwargs)
+
+
+class RateBookView(LoginRequiredMixin, RedirectView):
+    http_method_names = ["post", "put", "patch"]
+
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse_lazy("User:login"))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        ref: str = request.META.get("HTTP_REFERER", "Lib:home")
+        return HttpResponseRedirect(ref)
+
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        rate_value = request.POST.get("rate", None)
+        book_id = request.POST.get("book_id")
+        user_id = int(request.user.pk)
+        should_delete = request.POST.get("delete", False)
+
+        if should_delete:
+            user = get_user_model().objects.get(pk=user_id)
+            book = Book.objects.get(pk=book_id)
+            UserRating.objects.get(user=user, book=book).delete()
+            return super().post(request, *args, **kwargs)
+
+        if not rate_value:
+            return super().post(request, *args, **kwargs)
+
+        try:
+            user = get_user_model().objects.get(pk=user_id)
+            book = Book.objects.get(pk=book_id)
+        except Exception as e:
+            print(e)
+            return super().post(request, *args, **kwargs)
+
+        user_rate, created = UserRating.objects.get_or_create(user=user, book=book)
+        user_rate.rating = int(rate_value)
+        user_rate.save()
 
         return super().post(request, *args, **kwargs)

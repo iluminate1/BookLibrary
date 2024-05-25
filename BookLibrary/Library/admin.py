@@ -3,7 +3,7 @@ from django.utils.safestring import SafeText, mark_safe
 
 from BookLibrary.settings import MEDIA_URL
 
-from .models import Author, Book, Category
+from .models import Author, Book, Category, Review
 
 
 # Register your models here.
@@ -63,3 +63,16 @@ class BookAdmin(admin.ModelAdmin):
     )
     prepopulated_fields = {"slug": ("name",), "publisher_slug": ("publisher",)}
     save_on_top = True
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ("user", "book", "review_short_text")
+
+    save_on_top = True
+
+    @admin.display(description="Comment text")
+    def review_short_text(self, review: Review):
+        review_text = review.review_text
+
+        return review_text[:50] + ("..." if len(review_text) > 50 else "")

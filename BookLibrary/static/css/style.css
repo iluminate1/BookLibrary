@@ -691,7 +691,7 @@ header {
     width: 100%;
     max-width: 1150px;
     margin: 0 auto;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .body {
@@ -795,7 +795,7 @@ header {
 .book_desq {
     margin-bottom: 25px;
     max-height: 235px;
-    overflow: hidden;
+    overflow-y: scroll;
 }
 
 
@@ -942,7 +942,7 @@ dialog[open]::backdrop {
     justify-content: center;
 }
 
-.info-text a{
+.info-text a {
     color: #0376b8;
     text-decoration: underline;
 }
@@ -979,4 +979,60 @@ dialog[open]::backdrop {
 .add-panel button {
     margin: 0 5px 10px;
     width: unset;
+}
+
+.user__rate {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stars {
+    margin-right: 15px;
+    text-align: center;
+}
+
+.rate:not(:checked)>input {
+    position: absolute;
+    top: -9999px;
+}
+
+.rate:not(:checked)>label {
+    float: right;
+    width: 1em;
+    overflow: hidden;
+    white-space: nowrap;
+    cursor: pointer;
+    font-size: 30px;
+    color: #ccc;
+}
+
+.rate:not(:checked)>label:before {
+    content: '★ ';
+}
+
+.rate>input:checked~label {
+    color: #ffc700;
+}
+
+.rate:not(:checked)>label:hover,
+.rate:not(:checked)>label:hover~label {
+    color: #deb217;
+}
+
+.rate>input:checked+label:hover,
+.rate>input:checked+label:hover~label,
+.rate>input:checked~label:hover,
+.rate>input:checked~label:hover~label,
+.rate>label:hover~input:checked~label {
+    color: #c59b08;
+}
+
+.delete_rate {
+    color: #999;
+    background: 0 0;
+    display: block;
+    border: 0;
+    cursor: pointer;
+    margin: 0 auto;
 }
