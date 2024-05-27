@@ -152,7 +152,7 @@ class Book(models.Model):
     language = models.CharField(
         max_length=3,
         choices=Language.choices,
-        default=Language.UNSELECTED,
+        default=Language.EN,
         verbose_name="Book language",
     )
     pages = models.PositiveSmallIntegerField(

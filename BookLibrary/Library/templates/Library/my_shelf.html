@@ -14,7 +14,7 @@
 
 <div class="cards__books__inner">
     <div class="cards__books-left">
-        <h1 style="text-align: center; margin-bottom: 10px">{{ category.name|default:'Library' }}</h1>
+        <h1 style="text-align: center; margin-bottom: 10px">My Shelf</h1>
         <div class="sort">
             <h2>Sort:</h2>
             {% if search %}
@@ -48,7 +48,7 @@
                 </div>
             </div>
             {% empty %}
-            <h1 style="display:flex; align-items: center;">This category is empty 😔</h1>
+            <h1 style="display:flex; align-items: center;">Your Shelf is empty 😔</h1>
             {% endfor %}
         </div>
     </div>
