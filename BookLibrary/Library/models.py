@@ -40,9 +40,13 @@ class Author(models.Model):
         default="Lib/author/photo/default.jpg",
         verbose_name="Author photo",
     )
-    country = models.CharField(max_length=50, verbose_name="Author nationality")
-    wiki_page = models.URLField(max_length=255, verbose_name="Link for wiki page")
-    bio = models.TextField(blank=True, verbose_name="Author bio")
+    country = models.CharField(
+        null=True, blank=True, max_length=50, verbose_name="Author nationality"
+    )
+    wiki_page = models.URLField(
+        null=True, blank=True, max_length=255, verbose_name="Link for wiki page"
+    )
+    bio = models.TextField(null=True, blank=True, verbose_name="Author bio")
     time_create = models.DateTimeField(auto_now_add=True, verbose_name="Create time")
     time_update = models.DateTimeField(auto_now=True, verbose_name="Update time")
 
@@ -61,12 +65,25 @@ class BookQuerySet(models.QuerySet):
         return (
             self.select_related("author")
             .published()
-            .annotate(rating=F("total_rating") / F("total_review"))
-            .order_by("-rating", "-total_review")
+            .annotate(total_view=Count("userrating__rating"))
+            .annotate(top=Sum("userrating__rating") / Count("userrating__rating"))
+            .order_by("-top", "-total_view")
+        )
+
+    def unpopular(self):
+        return (
+            self.select_related("author")
+            .published()
+            .annotate(total_view=Count("userrating__rating"))
+            .annotate(top=Sum("userrating__rating") / Count("userrating__rating"))
+            .order_by("top", "total_view")
         )
 
     def new_books(self):
         return self.published().select_related("author").order_by("-time_create")
+
+    def old_books(self):
+        return self.published().select_related("author").order_by("time_create")
 
 
 class BookManager(models.Manager):
@@ -79,8 +96,18 @@ class BookManager(models.Manager):
     def top_rated(self) -> BookQuerySet:
         return self.get_queryset().top_rated()
 
+    def unpopular(self) -> BookQuerySet:
+        return self.get_queryset().unpopular()
+
     def new_books(self) -> BookQuerySet:
         return self.get_queryset().new_books()
+
+    def old_books(self) -> BookQuerySet:
+        return self.get_queryset().old_books()
+
+
+def save_pdf_path(instance, filename):
+    return f"Lib/book/pdf/{instance.name}/{filename}"
 
 
 class Book(models.Model):
@@ -101,12 +128,25 @@ class Book(models.Model):
         default="Lib/book/cover/default.svg",
         verbose_name="Book cover",
     )
-    publish_date = models.PositiveIntegerField(
-        validators=[
-            MinValueValidator(1500),
-            MaxValueValidator(datetime.today().year),
-        ]
+    pdf = models.FileField(
+        null=True,
+        blank=True,
+        upload_to=save_pdf_path,
+        verbose_name="Book pdf file",
     )
+    user = models.ForeignKey(
+        get_user_model(), models.SET_NULL, default=None, null=True, blank=True
+    )
+    is_taken = models.BooleanField(default=False)
+    return_date = models.DateField(
+        null=True,
+        blank=True,
+        auto_now=False,
+        auto_now_add=False,
+        auto_created=False,
+        verbose_name="Return date",
+    )
+    publish_date = models.CharField(null=True, blank=True, max_length=10)
     publisher = models.CharField(max_length=200, verbose_name="Publisher")
     publisher_slug = models.SlugField(max_length=200, db_index=True)
     language = models.CharField(
@@ -129,9 +169,8 @@ class Book(models.Model):
     preview = models.URLField(
         blank=True, null=True, verbose_name="URL for book preview"
     )
+
     description = models.TextField(blank=True, verbose_name="Book description")
-    total_review = models.PositiveIntegerField(default=1)
-    total_rating = models.PositiveIntegerField(default=5)
     time_create = models.DateTimeField(auto_now_add=True, verbose_name="Create time")
     time_update = models.DateTimeField(auto_now=True, verbose_name="Update time")
     author = models.ForeignKey(Author, on_delete=models.CASCADE)

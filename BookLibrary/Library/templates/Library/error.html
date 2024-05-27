@@ -1,0 +1,16 @@
+{% extends '_base.html' %}
+
+{% block container %}
+
+<div
+    style="width: 70%; height:250px; border-radius: 5px; margin: 0 auto;background-color: #fff;text-align: center;padding: 10px;">
+    <h1 style="margin-bottom: 15px;">Something went wrong</h1>
+    <span style="display: block; margin-bottom: 40px">{{ message }}</span>
+    <a href="{% url 'Lib:home' %}" style="text-decoration: underline; color: blue">Return to home</a>
+    {% if book %}
+    <span style="margin: 0 15px;"> | </span>
+    <a href="{{ book.get_absolute_url }}" style="text-decoration: underline; color: blue">Return to book</a>
+    {% endif %}
+</div>
+
+{% endblock container %}

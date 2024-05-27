@@ -12,8 +12,10 @@
     <div class="card__left card__box">
         <img class="card__img" src="/media/{{ author.photo }}" alt="{{ author.full_name }}">
         <span class="card__username">{{ author.full_name }}</span>
-        <span style="color: grey; margin-bottom: 25px;">{{ author.country }}</span>
+        <span style="color: grey; margin-bottom: 25px;">{{ author.country|default:'Unknown' }}</span>
+        {% if author.wiki_page %}
         <a class="card__wiki" href="{{ author.wiki_page }}" target="_blank">Wiki</a>
+        {% endif %}
     </div>
     <div class="card__right card__box">
         <div class="right__inner">
@@ -39,8 +41,9 @@
                         <a class="cards__author" href="{{ book.author.get_absolute_url}}">
                             <span>{{ book.author.full_name }}</span>
                         </a>
-                        <!-- <div class="cards__rating">
-                        </div> -->
+                        <div class="cards__rating">
+                            {% book_rating book.pk %}
+                        </div>
                     </div>
                 </div>
             </div>

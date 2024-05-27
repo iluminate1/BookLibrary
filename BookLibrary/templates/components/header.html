@@ -4,8 +4,8 @@
     <a href="{% url 'Lib:home' %}" class="header__logo"><img src="{% static 'img/logo.svg' %}" alt="Your logo"></a>
     <nav class="nav">
         <a href="{% url 'Lib:library' %}">Library</a>
-        <a href="#">My Shelf</a>
-        <a href="#">Contribute</a>
+        <a href="{% url 'Lib:my_shelf' %}">My Shelf</a>
+        <a href="{% url 'Lib:contribute' %}">Contribute</a>
     </nav>
     <div class="profile">
         {% if user.is_authenticated %}

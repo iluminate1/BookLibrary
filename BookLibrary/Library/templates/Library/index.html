@@ -27,8 +27,9 @@
                     <a class="cards__author" href="{{ book.author.get_absolute_url }}">
                         <span>{{ book.author }}</span>
                     </a>
-                    <!-- <div class="cards__rating">
-                    </div> -->
+                    <div class="cards__rating">
+                        {% book_rating book.pk %}
+                    </div>
                 </div>
             </div>
             {% endfor %}
@@ -67,8 +68,9 @@
                         <a class="cards__author" href="{{ book.author.get_absolute_url}}">
                             <span>{{ book.author.full_name }}</span>
                         </a>
-                        <!-- <div class="cards__rating">
-                        </div> -->
+                        <div class="cards__rating">
+                            {% book_rating book.pk %}
+                        </div>
                     </div>
                 </div>
             </div>

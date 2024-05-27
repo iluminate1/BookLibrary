@@ -50,6 +50,7 @@ class AuthorAdmin(admin.ModelAdmin):
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "name",
         "slug",
         "author",

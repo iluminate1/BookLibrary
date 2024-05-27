@@ -26,15 +26,15 @@ star = """<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox
 
 
 @register.simple_tag()
-def book_rating(book_id: int) -> SafeText:
-    total_rating, total_review = UserRating.book_rating.book_total(
+def book_rating(book_id: int, show_rating_amount: bool = False) -> SafeText:
+    total_rating, total_review = UserRating.book_rating.select_related("user", "book").book_total(
         book_id=book_id
     ).values()
 
     review_num_string = f'<span class="dot">·</span><span>{total_review} Ratings</span>'
 
     if total_rating == None or total_review == None:
-        return mark_safe(review_num_string)
+        return mark_safe("Not rated yet")
 
     mark = int(total_rating) / int(total_review)
 
@@ -50,10 +50,19 @@ def book_rating(book_id: int) -> SafeText:
     if d >= 0.5:
         empty_stars = empty_star * int(4 - int(mark))
         res = "".join(
-            starts + half_star + empty_stars + average_mark_string + review_num_string
+            starts
+            + half_star
+            + empty_stars
+            + average_mark_string
+            + (review_num_string if show_rating_amount else "")
         )
     else:
         empty_stars = empty_star * int(5 - int(mark))
-        res = "".join(starts + empty_stars + average_mark_string + review_num_string)
+        res = "".join(
+            starts
+            + empty_stars
+            + average_mark_string
+            + (review_num_string if show_rating_amount else "")
+        )
 
     return mark_safe(res)

@@ -17,10 +17,58 @@
                             <button class="closeDialog button_save">Close</button>
                         </dialog>
                         {% else %}
-                        <a class="preview_unavalible" href="#">Preview (unavalible)</a>
+                        <a class="show_preview preview_unavalible" href="#">Preview (unavalible)</a>
                         {% endif %}
                     </div>
-                    <button class="button_save">Borrow</button>
+
+                    {% if book.is_taken %}
+                    {% if book.user == user %}
+                    {% if book.pdf %}
+                    <dialog id="bookPdf" style="width: min-content;">
+                        <iframe id="pdfFrame" src="/media/{{ book.pdf }}" frameborder="1" width="1100px" height="1000px"
+                            loading="lazy"></iframe>
+                        <button class="button_save" style="width: 45%;" onclick="window.open(pdfFrame.src)">Open in new
+                            tab</button>
+                        <button class="button_save" style="width: 45%;" onclick="bookPdf.close()">Close</button>
+                    </dialog>
+                    <button class="button_save" onclick="bookPdf.showModal()" style="margin-bottom: 15px;">Read
+                        pdf</button>
+                    {% else %}
+
+                    <button class="button_save" style="margin-bottom: 15px; background-color:grey">Pdf
+                        unavalible</button>
+                    {% endif %}
+
+                    <form action="return/" method="post" style="display: contents;">
+                        {% csrf_token %}
+                        <input type="hidden" name="book_id" value="{{ book.pk }}">
+                        <button class="button_save" style="background-color: #c44a4a;">Return</button>
+                    </form>
+                    {% else %}
+                    <button class="button_save" style="background-color: grey;">Borrow</button>
+                    {% endif %}
+
+
+                    {% else %}
+                    <button class="button_save" onclick="borrow_dialog.showModal()">Borrow</button>
+                    <dialog id="borrow_dialog" style="width: 250px; height:250px; ">
+                        <div
+                            style="display: flex;flex-direction: column;justify-content: space-evenly;align-items: center; height: 100%">
+                            <form action="borrow/" method="post" style="display: contents;">
+                                {% csrf_token %}
+                                <h2>Select return date</h2>
+                                {% if error_message %}
+                                <span>123</span>
+                                {% endif %}
+                                <span></span>
+                                <input type="hidden" name="book_id" value="{{ book.pk }}">
+                                <input type="date" name="return_date" id="return_date">
+                                <button class="button_save">Borrow</button>
+                            </form>
+                            <button class="button_save" onclick="borrow_dialog.close()">Close</button>
+                        </div>
+                    </dialog>
+                    {% endif %}
                 </div>
             </div>
             <div class="book__info">
@@ -28,6 +76,7 @@
                     <span>
                         <div class="user__rate">
                             <h1 class="work_title">{{ book.name }}</h1>
+                            {% if user.is_authenticated %}
                             <div class="stars">
                                 <form action="rate/" method="post">
                                     {% csrf_token %}
@@ -48,6 +97,7 @@
                                     {% endif %}
                                 </form>
                             </div>
+                            {% endif %}
                         </div>
                         <h2 class="by_line">
                             by
@@ -55,7 +105,19 @@
                         </h2>
                         <div class="book_rating">
                             <div class="cards__rating">
-                                {% book_rating book.pk %}
+                                {% book_rating book.pk True %}
+                                <span class="dot">·</span>
+                                <div class="status">
+                                    {% if book.is_taken %}
+                                    <span style="background-color: #e16363; color:#fff">Unavalible</span>
+                                    {% else %}
+                                    <span>Avalible</span>
+                                    {% endif %}
+                                </div>
+                                {% if book.is_taken %}
+                                <span class="dot">·</span>
+                                <span> Will be avalible at {{ book.return_date }}</span>
+                                {% endif %}
                             </div>
                         </div>
                     </span>
@@ -72,7 +134,7 @@
                         <div class="info-card-item">
                             <div>Publisher</div>
                             <span>
-                                <a href="/search/?author={{ book.publisher_slug }}"
+                                <a href="/search/?publisher={{ book.publisher_slug }}"
                                     style="color: #02598b; text-decoration: underline">{{ book.publisher }}</a>
                             </span>
                         </div>
@@ -132,6 +194,12 @@
 
 {% block script %}
 <script>
+    document.querySelectorAll('input[type="radio"]').forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            this.closest("form").submit();
+        });
+    });
+
     const dialogElem = document.getElementById("previewDialog");
     const showBtn = document.querySelector(".show_preview");
     const closeBtn = document.querySelector(".closeDialog");
@@ -143,13 +211,6 @@
     closeBtn.addEventListener("click", () => {
         dialogElem.close();
     });
-
-    document.querySelectorAll('input[type="radio"]').forEach(function (radio) {
-        radio.addEventListener('change', function () {
-            this.closest("form").submit();
-        });
-    });
-
 
 </script>
 {% endblock script %}
